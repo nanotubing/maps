@@ -1,5 +1,3 @@
-https://api.mapbox.com/styles/v1/nanotubing/cjo3p6xcn42nn2rp5htp39jaw/tiles/256/{z}/{x}/{y}@2x?access_token=
-
 <!DOCTYPE html>
 <html>
 
@@ -13,7 +11,12 @@ https://api.mapbox.com/styles/v1/nanotubing/cjo3p6xcn42nn2rp5htp39jaw/tiles/256/
     <link href='https://fonts.googleapis.com/css?family=Lato' rel='stylesheet' type='text/css'>
 
     <style>
+        html {
+        height: 100%;
+        }
+
         body {
+            height: 100%;
             margin: 0;
             padding: 0;
             background: whitesmoke;
@@ -33,8 +36,8 @@ https://api.mapbox.com/styles/v1/nanotubing/cjo3p6xcn42nn2rp5htp39jaw/tiles/256/
             color: #001323;
         }
         #map {
-            width: 80%;
-            height: 540px;
+            width: auto;
+            height: 70%;
             margin: 10px auto;
         }
         footer {
@@ -50,138 +53,33 @@ https://api.mapbox.com/styles/v1/nanotubing/cjo3p6xcn42nn2rp5htp39jaw/tiles/256/
 
 <body>
     <header>
-          <h1>Philadelphia Shooting Victims</h1>
+          <h1>Food and Poverty:</h1>
+          <h3>Blocks in Philadelphia with low or no walkable access to healthy food and high poverty</h3>
     </header>
 
     <div id='map'></div>
 
     <footer>
         <p>Map authored by Claude M. Schrader</p>
-        <p> Data courtesy of <a href="https://www.opendataphilly.org/dataset/shooting-victims">OpenDataPhilly</a>. Original map created by <a href="https://www.nbcphiladelphia.com/news/local/Map-Gun-Violence-Philadelphia-Michael-Hagan-NBC10-Investigators-367720141.html">NBC 10</a>
+        <p> Data courtesy <a href="https://www.opendataphilly.org/dataset/philadelphia-food-access">OpenDataPhilly</a>.   Map tiles created in <a href="https://www.mapbox.com/mapbox-studio/"> Mapbox Studio</a>
     </footer>
 
-    <script src="shootings.geojson" type="text/javascript"></script>
     <script>
-L.mapbox.accessToken = 'pk.eyJ1IjoibmFub3R1YmluZyIsImEiOiJjamdsbTkzaDMxM3dkMnlxdWFvdzNtMXR6In0.tFHKQP93eSPhV4zQl_Qh8w';
        var map = L.map('map', {
           center: [39.9895325,-75.1530539],
-          zoom: 12,
+          zoom: 14,
       });
+      
+      L.accessToken = 'pk.eyJ1IjoibmFub3R1YmluZyIsImEiOiJjamdsbTkzaDMxM3dkMnlxdWFvdzNtMXR6In0.tFHKQP93eSPhV4zQl_Qh8w';
 
-      var tiles = L.tileLayer('https://api.mapbox.com/styles/v1/nanotubing/cjo3p6xcn42nn2rp5htp39jaw/tiles/256/{z}/{x}/{y}@2x?access_token=' + L.mapbox.accessToken, {
+
+      var tiles = L.tileLayer('https://api.mapbox.com/styles/v1/nanotubing/cjo3p6xcn42nn2rp5htp39jaw/tiles/256/{z}/{x}/{y}@2x?access_token=' + L.accessToken, {
           attribution: '© <a href="https://www.mapbox.com/feedback/">Mapbox</a> © <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>',
           subdomains: 'abcd',
           maxZoom: 19
       });
 
       tiles.addTo(map);
-
-      var commonStyles = {
-        weight: 1,
-        stroke: true,
-        fillOpacity: .6
-      };
-
-// makeRequest()
-//  function makeRequest() {
-//     httpRequest = new XMLHttpRequest();
-//
-//     if (!httpRequest) {
-//       alert('Giving up :( Cannot create an XMLHTTP instance');
-//       return false;
-//     }
-//     httpRequest.onreadystatechange = alertContents;
-//     httpRequest.open('GET', 'http://data.phl.opendata.arcgis.com/datasets/210cdc6e80aa464881aa9c98b4a24fe1_0.geojson');
-//     httpRequest.send();
-//   }
-//
-//   function alertContents() {
-//     if (httpRequest.readyState === XMLHttpRequest.DONE) {
-//       if (httpRequest.status === 200) {
-//         console.log(httpRequest.responseText);
-//       } else {
-//         alert('There was a problem with the request.');
-//       }
-//     }
-//   }
-
-      var homicideLayer = L.geoJson(shootings, {
-                pointToLayer: function(feature,latlng) {
-                    return L.circleMarker(latlng, commonStyles);
-                },//close pointolayer
-                filter: function(feature, layer) {
-                  if( feature.properties.code >= 0100 && feature.properties.code <= 0119){
-                    return feature;
-                  }
-                },//close filter
-                style: function(feature){
-                  return{
-                    color: 'darkcyan',
-                    fillcolor: 'darkcyan',
-                    radius: 3
-                  }
-                },// close style:
-                onEachFeature : function(feature,layer) {
-                  layer.bindPopup("<b style='color:darkcyan'>" +feature.properties.location +"</b><br>Wound Location: " +feature.properties.wound);
-                }//close oneachfeature
-            }).addTo(map);
-
-      var robberyLayer = L.geoJson(shootings, {
-                pointToLayer: function(feature,latlng) {
-                    return L.circleMarker(latlng, commonStyles);
-                },//close pointolayer
-                filter: function(feature, layer) {
-                  if( feature.properties.code >= 0300 && feature.properties.code <= 0399){
-                    return feature;
-                  }
-                },//close filter
-                style: function(feature){
-                  return{
-                    color: 'salmon ',
-                    fillcolor: 'salmon',
-                    radius: 3
-                  }
-                },// close style:
-                onEachFeature : function(feature,layer) {
-                  layer.bindPopup("<b style='color:darkred'>" +feature.properties.location +"</b><br>Wound Location: " +feature.properties.wound);
-                }//close oneachfeature
-            }).addTo(map);
-
-      var agassaultLayer = L.geoJson(shootings, {
-                pointToLayer: function(feature,latlng) {
-                    return L.circleMarker(latlng, commonStyles);
-                },//close pointolayer
-                filter: function(feature, layer) {
-                  if( feature.properties.code >= 0400 && feature.properties.code <= 0499){
-                    return feature;
-                  }
-                },//close filter
-                style: function(feature){
-                  return{
-                    color: 'goldenrod',
-                    fillcolor: 'goldenrod',
-                    radius: 3
-                  }
-                },// close style:
-                onEachFeature : function(feature,layer) {
-                  layer.bindPopup("<b style='color:goldenrod'>" +feature.properties.location +"</b><br>Wound Location: "+ feature.properties.wound);
-                }//close oneachfeature
-            }).addTo(map);
-
-
-var layerGuide = {
-    "<b style='color:darkcyan'>Homicide</b>": homicideLayer,
-    "<b style='color:salmon'>Robberies</b>": robberyLayer,
-    "<b style='color:goldenrod'>Aggravated Assault</b>": agassaultLayer
-};
-
-L.control.layers(null, layerGuide, { collapsed:false }).addTo(map);
-
-      function getRadius(area) {
-        var radius = Math.sqrt(area/Math.PI);
-        return radius * 4;
-      }
-// };
 
     </script>
 
